@@ -1,0 +1,52 @@
+name: Collecte ponctualité ligne 32
+
+# Le flux GTFS-RT retient la journée de service en cours : 3 échantillons/jour
+# suffisent. Les crons sont en UTC (décalage Paris été +2 / hiver +1) et
+# best-effort côté GitHub — la fusion par date de service rend les runs
+# idempotents, un passage raté est rattrapé par le suivant.
+on:
+  schedule:
+    - cron: '0 12 * * *'  # ~14h Paris : sécurise la matinée
+    - cron: '45 21 * * *' # ~23h45 Paris (été) : journée quasi complète
+    - cron: '30 3 * * *'  # ~5h30 Paris : rattrape la fin de soirée de la veille
+  workflow_dispatch:
+
+# Moindre privilège : contents pour committer history/ et stats/.
+permissions:
+  contents: write
+
+# Deux runs simultanés pousseraient des commits concurrents.
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Dépendances
+        run: pip install --quiet gtfs-realtime-bindings
+
+      - name: Collecte + stats
+        run: python tools/collect.py
+
+      - name: Commit si changement
+        run: |
+          git add history stats
+          if git diff --cached --quiet; then
+            echo "aucun changement"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "data: ponctualité du $(date -u +'%F %H:%M') UTC"
+            git pull --rebase origin main
+            git push
+          fi
