@@ -1,0 +1,32 @@
+{
+ "date": "2026-07-06",
+ "samples": [
+  "2026-07-06T08:04:29+00:00"
+ ],
+ "trains": {
+  "889417": {
+   "cancelled": false,
+   "finalDelayS": 0,
+   "maxDelayS": 0,
+   "skippedStops": 0
+  },
+  "889421": {
+   "cancelled": false,
+   "finalDelayS": 0,
+   "maxDelayS": 0,
+   "skippedStops": 0
+  },
+  "889469": {
+   "cancelled": false,
+   "finalDelayS": 0,
+   "maxDelayS": 0,
+   "skippedStops": 0
+  },
+  "889471": {
+   "cancelled": false,
+   "finalDelayS": 0,
+   "maxDelayS": 0,
+   "skippedStops": 0
+  }
+ }
+}
