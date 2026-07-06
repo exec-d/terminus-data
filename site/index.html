@@ -9,187 +9,202 @@
 <meta property="og:title" content="TERMinus — ligne 32 Bourg-en-Bresse ⇄ Lyon">
 <meta property="og:description" content="Les prochains trains de la ligne 32 en temps réel, sur Android. Open data SNCF, zéro compte, zéro tracking.">
 <meta property="og:image" content="assets/screenshot_010.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0A0F14;
-    --surface: #101820;
-    --surface-2: #0D141B;
-    --cyan: #22D3EE;
-    --cyan-dim: rgba(34, 211, 238, 0.35);
-    --cyan-faint: rgba(34, 211, 238, 0.12);
-    --text: #E6EDF3;
-    --text-2: #9FB1BD;
-    --text-3: #5C6E7A;
-    --warning: #FBBF24;
-    --error: #F87171;
-    --mono: ui-monospace, "JetBrains Mono", "Cascadia Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
+    --bg: #000;
+    --bg-card: #0a0a0a;
+    --neon: #0ff;
+    --neon-dim: #0cc;
+    --neon-glow: rgba(0, 255, 255, 0.30);
+    --neon-faint: rgba(0, 255, 255, 0.05);
+    --text: #e0e0e0;
+    --muted: #888;
+    --border: #1a1a1a;
+    --warning: #fbbf24;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--mono);
-    line-height: 1.6;
-    /* Grille TRON discrète en fond */
-    background-image:
-      linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
-    background-size: 44px 44px;
-  }
-  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
-  a { color: var(--cyan); text-decoration: none; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.65; }
+  a { color: var(--neon); text-decoration: none; }
   a:hover { text-decoration: underline; }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- Effets ---------- */
+  .neon-text { color: var(--neon); text-shadow: 0 0 10px var(--neon-glow), 0 0 40px var(--neon-glow); }
+  .scanlines::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.025) 0 1px, transparent 1px 3px);
+  }
+  .fade-in { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in { opacity: 1; transform: none; transition: none; }
+  }
 
   /* ---------- Hero ---------- */
-  header {
-    padding: 72px 0 48px;
-    text-align: center;
-    background: radial-gradient(ellipse 70% 60% at 50% 0%, var(--cyan-faint), transparent);
+  .hero {
+    position: relative; min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 48px 20px;
+    background: radial-gradient(ellipse 60% 45% at 50% 38%, rgba(0, 255, 255, 0.07), transparent);
   }
-  .logo { width: 130px; height: auto; filter: drop-shadow(0 0 24px var(--cyan-dim)); }
-  h1 {
-    font-size: clamp(2.2rem, 6vw, 3.4rem);
-    letter-spacing: 0.08em;
-    margin-top: 12px;
+  .hero .logo { width: 132px; height: auto; filter: drop-shadow(0 0 26px var(--neon-glow)); }
+  .hero h1 {
+    margin-top: 18px; font-family: var(--mono); font-weight: 700; letter-spacing: -0.02em;
+    font-size: clamp(2.6rem, 8vw, 4.2rem);
   }
-  h1 .ter { color: var(--cyan); text-shadow: 0 0 18px var(--cyan-dim); }
-  .tagline { color: var(--text-2); font-size: clamp(1rem, 2.6vw, 1.15rem); margin-top: 10px; }
-  .tagline b { color: var(--text); }
-  .badges { margin-top: 18px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .hero .tagline { margin-top: 14px; font-size: clamp(1.02rem, 2.8vw, 1.25rem); color: var(--text); }
+  .hero .subline { margin-top: 6px; font-family: var(--mono); font-size: 0.85rem; color: var(--muted); letter-spacing: 0.04em; }
+  .hero .subline b { color: var(--neon-dim); font-weight: 400; }
+
+  .cta { margin-top: 38px; display: flex; gap: 16px; justify-content: center; align-items: stretch; flex-wrap: wrap; }
+  .apk-download {
+    display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.35rem; border-radius: 0.5rem;
+    background: rgba(0, 255, 255, 0.05); border: 1px solid rgba(0, 255, 255, 0.25);
+    transition: all 0.3s;
+  }
+  .apk-download:hover {
+    background: rgba(0, 255, 255, 0.12); transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.15); text-decoration: none;
+  }
+  .apk-download__icon { font-size: 1.5rem; color: var(--neon); }
+  .apk-download__text { display: flex; flex-direction: column; line-height: 1.25; text-align: left; }
+  .apk-download__label { font-family: var(--mono); font-size: 0.92rem; font-weight: 700; color: var(--neon); }
+  .apk-download__sub { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(0, 255, 255, 0.5); }
+  .ghost-btn {
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.35rem; border-radius: 0.5rem;
+    border: 1px solid var(--border); color: var(--muted); font-family: var(--mono); font-size: 0.9rem;
+    transition: all 0.3s;
+  }
+  .ghost-btn:hover { color: var(--text); border-color: #333; text-decoration: none; }
+
+  .hero .badges { margin-top: 34px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .badge {
-    font-size: 0.72rem; letter-spacing: 0.06em; color: var(--text-2);
-    border: 1px solid var(--cyan-dim); border-radius: 999px; padding: 3px 12px;
-    background: var(--surface-2);
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 4px 13px;
+    background: var(--bg-card);
   }
-  .cta { margin-top: 30px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .btn {
-    display: inline-block; padding: 14px 26px; border-radius: 10px;
-    font-family: var(--mono); font-size: 1rem; letter-spacing: 0.04em;
-    border: 1px solid var(--cyan); color: var(--cyan); background: transparent;
-    transition: box-shadow 0.2s, background 0.2s;
-  }
-  .btn:hover { text-decoration: none; box-shadow: 0 0 22px var(--cyan-dim); background: var(--cyan-faint); }
-  .btn.primary {
-    background: var(--cyan); color: #06222A; font-weight: 700;
-    box-shadow: 0 0 28px var(--cyan-dim);
-  }
-  .btn.primary:hover { box-shadow: 0 0 40px var(--cyan-dim); background: #4ADEF0; }
-  .cta-note { margin-top: 10px; color: var(--text-3); font-size: 0.78rem; }
+  .hero .scroll-hint { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
+    color: rgba(0, 255, 255, 0.4); font-size: 1.2rem; animation: bob 2.2s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
+  @media (prefers-reduced-motion: reduce) { .hero .scroll-hint { animation: none; } }
 
   /* ---------- Sections ---------- */
-  section { padding: 56px 0; border-top: 1px solid rgba(34, 211, 238, 0.10); }
+  section { padding: 96px 0; }
+  section + section { border-top: 1px solid rgba(0, 255, 255, 0.08); }
   h2 {
-    font-size: 1.15rem; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--cyan); margin-bottom: 26px;
+    font-family: var(--mono); font-size: clamp(1.3rem, 3.4vw, 1.75rem); font-weight: 700;
+    text-align: center; margin-bottom: 56px;
   }
-  h2::before { content: "// "; color: var(--text-3); }
-  p + p { margin-top: 12px; }
-  .muted { color: var(--text-2); }
+  .muted { color: var(--muted); }
 
   /* ---------- Pourquoi ---------- */
-  .why { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .why { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 760px) { .why { grid-template-columns: 1fr; } }
-  .why-card {
-    background: var(--surface); border: 1px solid rgba(34, 211, 238, 0.18);
-    border-radius: 12px; padding: 22px;
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 26px;
+    transition: border-color 0.3s, box-shadow 0.3s;
   }
-  .why-card h3 { color: var(--text); font-size: 0.95rem; margin-bottom: 10px; letter-spacing: 0.04em; }
-  .why-card h3::before { content: "▸ "; color: var(--cyan); }
-  .why-card p { color: var(--text-2); font-size: 0.88rem; }
-  .stations {
-    margin-top: 14px; font-size: 0.78rem; color: var(--text-3); line-height: 1.9;
-  }
-  .stations b { color: var(--cyan); font-weight: 400; }
+  .card:hover { border-color: rgba(0, 255, 255, 0.25); box-shadow: 0 0 24px rgba(0, 255, 255, 0.06); }
+  .card h3 { font-family: var(--mono); font-size: 1rem; font-weight: 700; color: var(--neon); margin-bottom: 12px; }
+  .card p { color: var(--muted); font-size: 0.92rem; }
+  .card p + p { margin-top: 10px; }
+  .stations { margin-top: 16px; font-family: var(--mono); font-size: 0.72rem; color: #555; line-height: 2; }
+  .stations b { color: var(--neon-dim); font-weight: 400; }
 
-  /* ---------- Features ---------- */
+  /* ---------- Fonctionnalités ---------- */
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   @media (max-width: 860px) { .grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
-  .feat {
-    background: var(--surface); border: 1px solid rgba(34, 211, 238, 0.18);
-    border-radius: 12px; padding: 20px; transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .feat:hover { border-color: var(--cyan-dim); box-shadow: 0 0 18px rgba(34, 211, 238, 0.08); }
-  .feat .ico { font-size: 1.4rem; }
-  .feat h3 { font-size: 0.92rem; margin: 10px 0 6px; letter-spacing: 0.03em; }
-  .feat p { font-size: 0.82rem; color: var(--text-2); }
+  .feat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 22px;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s; }
+  .feat:hover { border-color: rgba(0, 255, 255, 0.25); box-shadow: 0 0 24px rgba(0, 255, 255, 0.06); transform: translateY(-2px); }
+  .feat .ico { font-size: 1.35rem; }
+  .feat h3 { font-family: var(--mono); font-size: 0.9rem; font-weight: 700; color: var(--neon); margin: 12px 0 7px; }
+  .feat p { font-size: 0.84rem; color: var(--muted); }
 
-  /* ---------- Screenshots ---------- */
-  .shots {
-    display: flex; gap: 18px; overflow-x: auto; padding: 6px 4px 18px;
-    scroll-snap-type: x mandatory;
-  }
-  .shots::-webkit-scrollbar { height: 8px; }
-  .shots::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 4px; }
-  .shots::-webkit-scrollbar-track { background: var(--surface-2); }
-  .shot { flex: 0 0 auto; width: 236px; scroll-snap-align: start; text-align: center; }
+  /* ---------- Captures ---------- */
+  .shots { display: flex; gap: 20px; overflow-x: auto; padding: 6px 4px 20px; scroll-snap-type: x mandatory; }
+  .shots::-webkit-scrollbar { height: 6px; }
+  .shots::-webkit-scrollbar-thumb { background: rgba(0, 255, 255, 0.25); border-radius: 3px; }
+  .shots::-webkit-scrollbar-track { background: var(--bg-card); }
+  .shot { flex: 0 0 auto; width: 232px; scroll-snap-align: start; text-align: center; }
   .shot img {
-    width: 100%; height: auto; border-radius: 18px;
-    border: 1px solid rgba(34, 211, 238, 0.25);
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
+    width: 100%; height: auto; border-radius: 20px; border: 1px solid var(--border);
+    box-shadow: 0 8px 34px rgba(0, 0, 0, 0.7); transition: border-color 0.3s, box-shadow 0.3s;
   }
-  .shot figcaption { margin-top: 10px; font-size: 0.76rem; color: var(--text-2); }
+  .shot:hover img { border-color: rgba(0, 255, 255, 0.35); box-shadow: 0 0 30px rgba(0, 255, 255, 0.10); }
+  .shot figcaption { margin-top: 12px; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
 
-  /* ---------- Installation ---------- */
-  ol.steps { list-style: none; counter-reset: step; display: grid; gap: 14px; }
-  ol.steps li {
-    counter-increment: step; position: relative; padding: 18px 20px 18px 64px;
-    background: var(--surface); border: 1px solid rgba(34, 211, 238, 0.18); border-radius: 12px;
-    font-size: 0.9rem;
+  /* ---------- Installation (étapes numérotées) ---------- */
+  .steps { display: grid; gap: 18px; max-width: 720px; margin: 0 auto; }
+  .step { display: flex; gap: 20px; align-items: flex-start;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+  .step__num {
+    flex: 0 0 auto; width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-weight: 700; font-size: 1.05rem; color: var(--neon);
+    border: 1px solid rgba(0, 255, 255, 0.35); box-shadow: 0 0 14px rgba(0, 255, 255, 0.12) inset, 0 0 10px rgba(0, 255, 255, 0.08);
   }
-  ol.steps li::before {
-    content: "0" counter(step); position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
-    color: var(--cyan); font-size: 1.15rem; font-weight: 700; text-shadow: 0 0 12px var(--cyan-dim);
-  }
-  ol.steps li b { color: var(--text); }
-  ol.steps li .sub { display: block; color: var(--text-2); font-size: 0.8rem; margin-top: 4px; }
+  .step__body b { display: block; font-family: var(--mono); font-size: 0.92rem; color: var(--text); margin-bottom: 4px; }
+  .step__body span { font-size: 0.85rem; color: var(--muted); }
   .callout {
-    margin-top: 18px; padding: 14px 18px; border-radius: 10px; font-size: 0.82rem;
-    border: 1px solid rgba(251, 191, 36, 0.35); background: rgba(251, 191, 36, 0.06); color: var(--text-2);
+    max-width: 720px; margin: 22px auto 0; padding: 16px 20px; border-radius: 10px; font-size: 0.84rem;
+    border: 1px solid rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.05); color: var(--muted);
   }
   .callout b { color: var(--warning); }
 
-  /* ---------- Data ---------- */
-  .data-links { margin-top: 14px; font-size: 0.85rem; line-height: 2; color: var(--text-2); }
+  /* ---------- Données ---------- */
+  .data-card { max-width: 760px; margin: 0 auto; }
+  .data-links { margin-top: 16px; font-family: var(--mono); font-size: 0.82rem; line-height: 2.3; color: var(--muted); }
 
   /* ---------- Footer ---------- */
   footer {
-    border-top: 1px solid rgba(34, 211, 238, 0.10);
-    padding: 34px 0 46px; text-align: center; color: var(--text-3); font-size: 0.78rem; line-height: 2;
+    border-top: 1px solid rgba(0, 255, 255, 0.1); padding: 44px 0 56px;
+    text-align: center; color: #555; font-size: 0.78rem; line-height: 2.1;
   }
+  footer b { color: var(--muted); }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="wrap">
-    <img class="logo" src="assets/logo-terminus.png" alt="Logo TERMinus — train stylisé">
-    <h1><span class="ter">TER</span>Minus</h1>
-    <p class="tagline">Les prochains trains de la <b>ligne 32 · Bourg-en-Bresse ⇄ Lyon</b>,<br>en temps réel, dans votre poche.</p>
-    <div class="badges">
-      <span class="badge">ANDROID</span>
-      <span class="badge">OPEN DATA · ODbL</span>
-      <span class="badge">100 % SUR L'APPAREIL</span>
-      <span class="badge">GRATUIT · SANS COMPTE · SANS PUB</span>
-    </div>
-    <div class="cta">
-      <a id="dl" class="btn primary" href="https://github.com/exec-d/terminus-32/releases/latest">Télécharger l'APK</a>
-      <a class="btn" href="#installer">Comment l'installer</a>
-    </div>
-    <p class="cta-note" id="dl-note">Android 5.0+ · ~56 Mo · installation hors Play Store</p>
+<header class="hero scanlines">
+  <img class="logo" src="assets/logo-terminus.png" alt="Logo TERMinus — train stylisé">
+  <h1 class="neon-text">TERMinus</h1>
+  <p class="tagline">L'heure de votre train, en temps réel.</p>
+  <p class="subline">Ligne <b>32</b> · Bourg-en-Bresse ⇄ Lyon · Android</p>
+  <div class="cta">
+    <a id="dl" class="apk-download" href="https://github.com/exec-d/terminus-32/releases/latest">
+      <span class="apk-download__icon">⬇</span>
+      <span class="apk-download__text">
+        <span class="apk-download__label">Télécharger l'APK</span>
+        <span class="apk-download__sub" id="dl-sub">Android · hors Play Store</span>
+      </span>
+    </a>
+    <a class="ghost-btn" href="#pourquoi">Découvrir ↓</a>
   </div>
+  <div class="badges">
+    <span class="badge">Open data · ODbL</span>
+    <span class="badge">100 % sur l'appareil</span>
+    <span class="badge">Sans compte · sans pub</span>
+  </div>
+  <span class="scroll-hint">↧</span>
 </header>
 
 <section id="pourquoi">
   <div class="wrap">
-    <h2>Pourquoi une app pour une seule ligne ?</h2>
+    <h2 class="fade-in neon-text">Pourquoi une app pour une seule ligne ?</h2>
     <div class="why">
-      <div class="why-card">
+      <div class="card fade-in">
         <h3>Faite par un navetteur, pour les navetteurs</h3>
         <p>TERMinus ne cherche pas à couvrir toute la France : elle connaît <em>votre</em> ligne par cœur.
         Les 13 gares de la ligne 32 sont embarquées, l'app démarre directement sur votre trajet
-        Domicile ⇄ Travail, et chaque écran est pensé pour la question du quotidien :
+        Domicile ⇄ Travail, et chaque écran répond à la question du quotidien :
         « mon train est-il à l'heure ? »</p>
         <p class="stations">
           <b>Bourg-en-Bresse</b> · Servas-Lent · Saint-Paul-de-Varax · Marlieux-Châtillon ·
@@ -197,13 +212,13 @@
           Les Échets · Sathonay-Rillieux · <b>Lyon Part-Dieu</b> · Lyon Vaise · Lyon Perrache
         </p>
       </div>
-      <div class="why-card">
+      <div class="card fade-in">
         <h3>Zéro serveur, zéro compte, zéro tracking</h3>
         <p>L'app interroge directement les flux temps réel publics de la SNCF
         (<a href="https://transport.data.gouv.fr">transport.data.gouv.fr</a>) depuis votre téléphone.
         Aucun backend, aucune donnée personnelle ne quitte l'appareil, aucun compte à créer.
-        Le code de la donnée publiée (horaires, statistiques de ponctualité) est
-        <a href="https://github.com/exec-d/terminus-32">ouvert et vérifiable</a>.</p>
+        Les données publiées (horaires, statistiques de ponctualité) sont
+        <a href="https://github.com/exec-d/terminus-32">ouvertes et vérifiables</a>.</p>
         <p>Et si l'expérience fait ses preuves, la même mécanique pourra un jour être déclinée
         à d'autres lignes — chaque ligne son app, légère et sur mesure.</p>
       </div>
@@ -213,31 +228,31 @@
 
 <section id="fonctions">
   <div class="wrap">
-    <h2>Ce qu'elle sait faire</h2>
+    <h2 class="fade-in neon-text">Ce qu'elle sait faire</h2>
     <div class="grid">
-      <div class="feat"><span class="ico">🚦</span>
+      <div class="feat fade-in"><span class="ico">🚦</span>
         <h3>Temps réel GTFS-RT</h3>
         <p>Retards, suppressions et arrêts non desservis, rafraîchis automatiquement (30 s à 5 min, au choix). Heure d'arrivée estimée sur chaque départ.</p>
       </div>
-      <div class="feat"><span class="ico">📌</span>
+      <div class="feat fade-in"><span class="ico">📌</span>
         <h3>Trains épinglés</h3>
-        <p>Épinglez votre train du matin en récurrent (jours de semaine au choix) : confirmation quand il apparaît dans le flux, alerte dès qu'il déraille du plan.</p>
+        <p>Épinglez votre train du matin en récurrent : confirmation quand il apparaît dans le flux, alerte dès qu'il déraille du plan, rappel avant le départ si vous l'activez.</p>
       </div>
-      <div class="feat"><span class="ico">🔔</span>
+      <div class="feat fade-in"><span class="ico">🔔</span>
         <h3>Notifications utiles</h3>
         <p>Seuil de retard réglable, gares surveillées, silence la nuit (22 h–6 h) avec exception pour les vraies urgences. Jamais deux fois la même alerte.</p>
       </div>
-      <div class="feat"><span class="ico">⚠️</span>
+      <div class="feat fade-in"><span class="ico">⚠️</span>
         <h3>Perturbations décodées</h3>
         <p>Grève, travaux, incident : cause, effet, période et trains touchés, avec badge directement sur les départs concernés.</p>
       </div>
-      <div class="feat"><span class="ico">🗺️</span>
+      <div class="feat fade-in"><span class="ico">🗺️</span>
         <h3>Parcours complet</h3>
         <p>Un tap sur un train ouvre son parcours gare par gare, avec les horaires estimés en temps réel et les arrêts supprimés barrés.</p>
       </div>
-      <div class="feat"><span class="ico">🔄</span>
+      <div class="feat fade-in"><span class="ico">🔄</span>
         <h3>Toujours à jour, toute seule</h3>
-        <p>Les horaires théoriques se mettent à jour chaque semaine sans réinstallation, et l'app vous proposera ses propres mises à jour dès qu'une nouvelle version sort.</p>
+        <p>Les horaires théoriques se mettent à jour chaque semaine sans réinstallation, et l'app vous propose ses propres mises à jour dès qu'une version sort.</p>
       </div>
     </div>
   </div>
@@ -245,29 +260,29 @@
 
 <section id="captures">
   <div class="wrap">
-    <h2>En images</h2>
+    <h2 class="fade-in neon-text">En images</h2>
     <div class="shots">
-      <figure class="shot">
+      <figure class="shot fade-in">
         <img src="assets/screenshot_010.png" alt="Écran principal : liste des prochains départs vers Lyon avec heures, numéros de train et statut temps réel" loading="lazy">
         <figcaption>Les prochains départs, en un coup d'œil</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot fade-in">
         <img src="assets/screenshot_007.png" alt="Détail d'un train : parcours complet gare par gare avec horaires" loading="lazy">
         <figcaption>Le parcours complet de chaque train</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot fade-in">
         <img src="assets/screenshot_004.png" alt="Épinglage d'un train récurrent avec choix des jours de la semaine" loading="lazy">
         <figcaption>Épinglez votre train du quotidien</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot fade-in">
         <img src="assets/screenshot_006.png" alt="Écran des trains épinglés" loading="lazy">
         <figcaption>Vos trains suivis, notifiés au moindre écart</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot fade-in">
         <img src="assets/screenshot_002.png" alt="Réglages des notifications : seuil de retard, sens surveillé, gares surveillées" loading="lazy">
         <figcaption>Des notifications sur mesure</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot fade-in">
         <img src="assets/screenshot_001.png" alt="Réglages des données : fraîcheur des horaires et vérification manuelle" loading="lazy">
         <figcaption>Des horaires qui se mettent à jour seuls</figcaption>
       </figure>
@@ -277,18 +292,30 @@
 
 <section id="installer">
   <div class="wrap">
-    <h2>Installation</h2>
-    <ol class="steps">
-      <li><b>Téléchargez l'APK</b> avec le bouton en haut de cette page.
-        <span class="sub">De préférence en Wi-Fi (~56 Mo).</span></li>
-      <li><b>Ouvrez le fichier téléchargé</b> et autorisez l'installation depuis cette source quand Android le demande.
-        <span class="sub">Réglage demandé une seule fois, pour votre navigateur ou gestionnaire de fichiers.</span></li>
-      <li><b>Lancez TERMinus</b> et choisissez vos gares Domicile et Travail.
-        <span class="sub">C'est tout — pas de compte, pas de configuration réseau.</span></li>
-      <li><b>Les mises à jour viennent à vous.</b>
-        <span class="sub">L'app vérifie à chaque lancement si une nouvelle version existe et vous propose de l'installer en un tap (même signature, les données sont conservées).</span></li>
-    </ol>
-    <div class="callout">
+    <h2 class="fade-in neon-text">Installation</h2>
+    <div class="steps">
+      <div class="step fade-in">
+        <span class="step__num">1</span>
+        <span class="step__body"><b>Téléchargez l'APK</b>
+        <span>Avec le bouton en haut de cette page — de préférence en Wi-Fi (~56 Mo).</span></span>
+      </div>
+      <div class="step fade-in">
+        <span class="step__num">2</span>
+        <span class="step__body"><b>Ouvrez le fichier téléchargé</b>
+        <span>Autorisez l'installation depuis cette source quand Android le demande (une seule fois).</span></span>
+      </div>
+      <div class="step fade-in">
+        <span class="step__num">3</span>
+        <span class="step__body"><b>Lancez TERMinus</b>
+        <span>Choisissez vos gares Domicile et Travail. C'est tout — pas de compte, pas de configuration.</span></span>
+      </div>
+      <div class="step fade-in">
+        <span class="step__num">4</span>
+        <span class="step__body"><b>Les mises à jour viennent à vous</b>
+        <span>L'app vérifie à chaque lancement si une nouvelle version existe et l'installe en un tap, données conservées.</span></span>
+      </div>
+    </div>
+    <div class="callout fade-in">
       <b>Play Protect peut afficher un avertissement générique</b> : c'est le message standard pour toute
       application installée hors Play Store. L'APK est signé, construit et publié automatiquement par une
       chaîne d'intégration continue GitHub — aucun binaire modifié à la main.
@@ -298,20 +325,22 @@
 
 <section id="donnees">
   <div class="wrap">
-    <h2>Les données</h2>
-    <p class="muted">Ce dépôt (<a href="https://github.com/exec-d/terminus-32">exec-d/terminus-32</a>) est
-    la partie publique du projet : il héberge et republie les données que l'application consomme.</p>
-    <div class="data-links">
-      📅 <a href="https://raw.githubusercontent.com/exec-d/terminus-32/main/line32.json">line32.json</a>
-      — le référentiel de la ligne (gares, trains, calendrier), régénéré chaque semaine depuis le GTFS national SNCF.<br>
-      📊 <a href="https://raw.githubusercontent.com/exec-d/terminus-32/main/stats/line32.json">stats/line32.json</a>
-      — la ponctualité par train (semaine / mois / année), mesurée 3 fois par jour sur le flux temps réel.<br>
-      📱 <a href="https://raw.githubusercontent.com/exec-d/terminus-32/main/app/latest.json">app/latest.json</a>
-      — le manifeste de la dernière version de l'application.
+    <h2 class="fade-in neon-text">Les données</h2>
+    <div class="card data-card fade-in">
+      <p class="muted">Ce dépôt (<a href="https://github.com/exec-d/terminus-32">exec-d/terminus-32</a>) est
+      la partie publique du projet : il héberge et republie les données que l'application consomme.</p>
+      <div class="data-links">
+        📅 <a href="https://raw.githubusercontent.com/exec-d/terminus-32/main/line32.json">line32.json</a>
+        — le référentiel de la ligne, régénéré chaque semaine depuis le GTFS national SNCF.<br>
+        📊 <a href="https://raw.githubusercontent.com/exec-d/terminus-32/main/stats/line32.json">stats/line32.json</a>
+        — la ponctualité par train (semaine / mois / année), mesurée 3 fois par jour.<br>
+        📱 <a href="https://raw.githubusercontent.com/exec-d/terminus-32/main/app/latest.json">app/latest.json</a>
+        — le manifeste de la dernière version de l'application.
+      </div>
+      <p class="muted" style="margin-top:16px">Source : SNCF via
+      <a href="https://transport.data.gouv.fr">transport.data.gouv.fr</a>, licence
+      <a href="https://opendatacommons.org/licenses/odbl/">ODbL</a>.</p>
     </div>
-    <p class="muted" style="margin-top:16px">Source : SNCF via
-    <a href="https://transport.data.gouv.fr">transport.data.gouv.fr</a>, licence
-    <a href="https://opendatacommons.org/licenses/odbl/">ODbL</a>.</p>
   </div>
 </section>
 
@@ -326,17 +355,23 @@
 </footer>
 
 <script>
-  // Lien de téléchargement direct + version courante depuis le manifeste publié
-  // par la CI à chaque release (raw.githubusercontent autorise le CORS).
+  // Version + lien direct depuis le manifeste publié par la CI à chaque release.
   fetch('https://raw.githubusercontent.com/exec-d/terminus-32/main/app/latest.json')
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (info) {
       if (!info || !info.apkUrl) return;
-      var btn = document.getElementById('dl');
-      btn.href = info.apkUrl;
-      btn.textContent = 'Télécharger l’APK — v' + info.version;
+      document.getElementById('dl').href = info.apkUrl;
+      document.getElementById('dl-sub').textContent = 'v' + info.version + ' — Android';
     })
     .catch(function () { /* le bouton retombe sur la page des releases */ });
+
+  // Fade-in au scroll (désactivé implicitement si reduced-motion : déjà visibles via CSS).
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(function (el) { io.observe(el); });
 </script>
 
 </body>
