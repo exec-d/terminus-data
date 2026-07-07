@@ -20,13 +20,12 @@
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-copy">
-      <img class="logo" src="assets/logo-terminus.png" alt="Logo TERMinus — train stylisé">
       <h1><span class="w-ter">TER</span><span class="w-minus">Minus</span></h1>
       <p class="tagline">L'heure de votre train, en temps réel.</p>
       <p class="subline">Ligne <b>32</b> · Bourg-en-Bresse ⇄ Lyon · Android</p>
       <div class="cta">
         <a id="dl" class="apk-download" href="https://github.com/exec-d/terminus-32/releases/latest">
-          <span class="apk-download__icon">⬇</span>
+          <img class="apk-download__logo" src="assets/logo-terminus.png" alt="Logo TERMinus" width="36" height="36">
           <span class="apk-download__text">
             <span class="apk-download__label">Télécharger l'APK</span>
             <span class="apk-download__sub" id="dl-sub">Android · hors Play Store</span>
@@ -199,6 +198,11 @@
   </div>
 </footer>
 
+<div id="lightbox" class="lightbox" hidden aria-hidden="true">
+  <button class="lightbox__close" type="button" aria-label="Fermer la vue agrandie">✕</button>
+  <img class="lightbox__img" src="" alt="">
+</div>
+
 <script>
   // Version + lien direct depuis le manifeste publié par la CI à chaque release.
   fetch('https://raw.githubusercontent.com/exec-d/terminus-32/main/app/latest.json')
@@ -217,6 +221,34 @@
     });
   }, { threshold: 0.12 });
   document.querySelectorAll('.fade-in').forEach(function (el) { io.observe(el); });
+
+  // Lightbox : clic (ou Entrée) sur une capture de la galerie pour l'agrandir.
+  (function () {
+    var lb = document.getElementById('lightbox');
+    if (!lb) return;
+    var lbImg = lb.querySelector('.lightbox__img');
+    var closeBtn = lb.querySelector('.lightbox__close');
+    function openLb(src, alt) {
+      lbImg.src = src; lbImg.alt = alt || '';
+      lb.hidden = false; lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden'; closeBtn.focus();
+    }
+    function closeLb() {
+      lb.hidden = true; lb.setAttribute('aria-hidden', 'true');
+      lbImg.src = ''; document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.shots .shot img').forEach(function (img) {
+      img.setAttribute('role', 'button');
+      img.setAttribute('tabindex', '0');
+      img.addEventListener('click', function () { openLb(img.currentSrc || img.src, img.alt); });
+      img.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(img.currentSrc || img.src, img.alt); }
+      });
+    });
+    closeBtn.addEventListener('click', closeLb);
+    lb.addEventListener('click', function (e) { if (e.target !== lbImg) closeLb(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
+  })();
 </script>
 
 </body>

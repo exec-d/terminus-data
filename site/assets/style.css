@@ -32,7 +32,6 @@ a:hover { text-decoration: underline; }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 48px 20px;
 }
-.hero .logo { width: 148px; height: auto; border-radius: 26px; }
 .hero h1 {
   margin-top: 18px; font-family: var(--mono); font-weight: 700; letter-spacing: -0.02em;
   font-size: clamp(2.6rem, 8vw, 4.2rem);
@@ -50,7 +49,7 @@ a:hover { text-decoration: underline; }
   transition: background 0.3s, border-color 0.3s, transform 0.3s;
 }
 .apk-download:hover { background: rgba(0, 255, 255, 0.12); transform: scale(1.03); text-decoration: none; }
-.apk-download__icon { font-size: 1.5rem; color: var(--neon); }
+.apk-download__logo { width: 36px; height: 36px; border-radius: 8px; flex: 0 0 auto; }
 .apk-download__text { display: flex; flex-direction: column; line-height: 1.25; text-align: left; }
 .apk-download__label { font-family: var(--mono); font-size: 0.92rem; font-weight: 700; color: var(--neon); }
 .apk-download__sub { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(0, 255, 255, 0.5); }
@@ -102,12 +101,19 @@ h2 {
 }
 .muted { color: var(--muted); }
 
-/* Illustration de section */
-.section-illu {
-  max-width: 900px; margin: 0 auto 48px; border: 1px solid var(--border);
-  border-radius: 14px; overflow: hidden; background: var(--bg-card);
+/* Illustration de section — fondu des bords vers le noir */
+.section-illu { max-width: 900px; margin: 0 auto 48px; }
+.section-illu img {
+  display: block; width: 100%; height: auto;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+    linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+    linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
+  mask-composite: intersect;
 }
-.section-illu img { display: block; width: 100%; height: auto; }
 
 /* Pourquoi */
 .why { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -139,13 +145,34 @@ h2 {
 .shots::-webkit-scrollbar { height: 6px; }
 .shots::-webkit-scrollbar-thumb { background: rgba(0, 255, 255, 0.25); border-radius: 3px; }
 .shots::-webkit-scrollbar-track { background: var(--bg-card); }
-.shot { flex: 0 0 auto; width: 232px; scroll-snap-align: start; text-align: center; }
+.shot { flex: 0 0 auto; width: 300px; scroll-snap-align: start; text-align: center; }
 .shot img {
   width: 100%; height: auto; border-radius: 20px; border: 1px solid var(--border);
-  box-shadow: 0 8px 34px rgba(0, 0, 0, 0.7); transition: border-color 0.3s;
+  box-shadow: 0 8px 34px rgba(0, 0, 0, 0.7); transition: border-color 0.3s, transform 0.3s;
+  cursor: zoom-in;
 }
-.shot:hover img { border-color: rgba(0, 255, 255, 0.35); }
+.shot:hover img { border-color: rgba(0, 255, 255, 0.35); transform: translateY(-3px); }
 .shot figcaption { margin-top: 12px; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+
+/* Lightbox galerie */
+.lightbox {
+  position: fixed; inset: 0; z-index: 50; padding: 24px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.92); cursor: zoom-out;
+}
+.lightbox[hidden] { display: none; }
+.lightbox__img {
+  max-width: 92vw; max-height: 92vh; width: auto; height: auto;
+  border-radius: 16px; border: 1px solid var(--border); cursor: default;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+.lightbox__close {
+  position: absolute; top: 18px; right: 22px; width: 42px; height: 42px;
+  background: var(--bg-card); color: var(--text); border: 1px solid var(--border);
+  border-radius: 50%; font-size: 1.05rem; line-height: 1; cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.lightbox__close:hover { color: var(--neon); border-color: rgba(0, 255, 255, 0.4); }
 
 /* Installation */
 .steps { display: grid; gap: 18px; max-width: 720px; margin: 0 auto; }
