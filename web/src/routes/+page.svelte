@@ -1,5 +1,6 @@
 <script lang="ts">
   import Seo from '$lib/components/Seo.svelte';
+  import Hero from '$lib/components/Hero.svelte';
 </script>
 
 <Seo
@@ -7,24 +8,4 @@
   description="Application non officielle de suivi de la ligne 32 TER : ponctualité, horaires et données ouvertes."
 />
 
-<section class="hero">
-  <h1><span class="w-ter">TER</span><span class="w-minus">Minus</span></h1>
-  <p class="muted">Le suivi honnête de la ligne 32 — Bourg-en-Bresse ⇄ Lyon.</p>
-</section>
-
-<style>
-  .hero {
-    padding-block: var(--space-6) var(--space-5);
-  }
-  h1 {
-    font-family: var(--font-mono);
-    font-size: clamp(2.5rem, 8vw, 4rem);
-    margin: 0;
-  }
-  .w-ter {
-    color: var(--accent);
-  }
-  .w-minus {
-    color: var(--fg);
-  }
-</style>
+<Hero />
