@@ -1,13 +1,17 @@
 <script lang="ts">
+  import { page } from '$app/state';
+
   interface Props {
     title: string;
     description: string;
-    path?: string;
+    path?: string; // override optionnel ; par défaut dérivé de la route courante
   }
-  let { title, description, path = '/' }: Props = $props();
+  let { title, description, path }: Props = $props();
 
-  const SITE = 'https://exec-d.github.io/terminus-32';
-  const url = $derived(`${SITE}${path}`);
+  // page.url.pathname reflète l'URL réellement servie (base incluse en prod),
+  // donc on ne préfixe pas nous-mêmes le base path pour éviter un doublon.
+  const ORIGIN = 'https://exec-d.github.io';
+  const url = $derived(ORIGIN + (path ?? page.url.pathname));
 </script>
 
 <svelte:head>
