@@ -1,6 +1,8 @@
 <script lang="ts">
   import Seo from '$lib/components/Seo.svelte';
   import Hero from '$lib/components/Hero.svelte';
+  import WhySection from '$lib/components/WhySection.svelte';
+  import FeaturesSection from '$lib/components/FeaturesSection.svelte';
 </script>
 
 <Seo
@@ -9,3 +11,5 @@
 />
 
 <Hero />
+<WhySection />
+<FeaturesSection />
