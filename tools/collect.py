@@ -20,6 +20,8 @@ from pathlib import Path
 
 from google.transit import gtfs_realtime_pb2
 
+from stats_lib import uic_of
+
 ROOT = Path(__file__).resolve().parent.parent
 FEED_URL = "https://proxy.transport.data.gouv.fr/resource/sncf-gtfs-rt-trip-updates"
 TRAIN_RE = re.compile(r"OCESN(\d+)")
@@ -42,6 +44,22 @@ def fetch_feed():
     with urllib.request.urlopen(FEED_URL, timeout=60) as r:
         feed.ParseFromString(r.read())
     return feed
+
+
+def stops_from_trip_update(tu):
+    """Retard par arrêt d'un trip_update : [{uic, delayS, skipped}]."""
+    stops = []
+    for stu in tu.stop_time_update:
+        uic = uic_of(stu.stop_id)
+        if not uic:
+            continue
+        if stu.schedule_relationship == stu.SKIPPED:
+            stops.append({"uic": uic, "delayS": None, "skipped": True})
+            continue
+        ev = stu.arrival if stu.HasField("arrival") else stu.departure
+        delay = ev.delay if ev.HasField("delay") else None
+        stops.append({"uic": uic, "delayS": delay, "skipped": False})
+    return stops
 
 
 def observe(feed, numbers):
@@ -69,6 +87,7 @@ def observe(feed, numbers):
             "maxDelayS": max_delay,
             "skippedStops": skipped,
             "cancelled": cancelled,
+            "stops": stops_from_trip_update(tu),
         }
     return obs
 
