@@ -58,6 +58,19 @@ describe('aggregatePunctuality', () => {
     expect(out.trains).toBe(1);
     expect(out.totalObs).toBe(10);
   });
+
+  it('sélectionne bien la fenêtre demandée (week ≠ month ≠ year)', () => {
+    const s = stats({
+      '1': {
+        week: { obs: 10, cancelledPct: 0, onTimePct: 50 },
+        month: { obs: 10, cancelledPct: 0, onTimePct: 80 },
+        year: { obs: 10, cancelledPct: 0, onTimePct: 100 }
+      }
+    });
+    expect(aggregatePunctuality(s, 'week').onTimePct).toBeCloseTo(50, 5);
+    expect(aggregatePunctuality(s, 'month').onTimePct).toBeCloseTo(80, 5);
+    expect(aggregatePunctuality(s, 'year').onTimePct).toBeCloseTo(100, 5);
+  });
 });
 
 function mkTrain(w: { obs: number; cancelledPct?: number; onTimePct?: number }): Record<
