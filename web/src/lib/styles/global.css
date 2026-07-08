@@ -60,6 +60,9 @@ img {
 section {
   padding: 96px 0;
 }
+section + section {
+  border-top: 1px solid var(--border);
+}
 h2 {
   font-family: var(--font-mono);
   font-size: clamp(1.3rem, 3.4vw, 1.75rem);

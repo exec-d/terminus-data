@@ -6,8 +6,8 @@
     $props();
 </script>
 
-<figure class="section-illu">
-  <img src="{base}/assets/{src}" {width} {height} {alt} loading="lazy" data-parallax use:reveal />
+<figure class="section-illu" use:reveal>
+  <img src="{base}/assets/{src}" {width} {height} {alt} loading="lazy" data-parallax />
 </figure>
 
 <style>
