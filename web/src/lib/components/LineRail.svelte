@@ -182,6 +182,17 @@
     }
   }
 
+  /* Laptops étroits (768–1299px) : le contenu centré (.wrap, max 1020px) n'a
+     pas de gouttière gauche assez large pour un libellé de gare → on masque les
+     libellés (le rail fin, les points et le train restent). Au-delà de 1300px,
+     la gouttière dégage le texte et les libellés réapparaissent. */
+  @media (min-width: 768px) and (max-width: 1299px) {
+    .linerail__name,
+    .linerail__end {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .linerail__stop,
     .linerail__fill,

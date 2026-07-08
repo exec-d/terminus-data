@@ -38,12 +38,6 @@
     font-size: 1.25rem;
     text-decoration: none;
   }
-  .w-ter {
-    color: var(--accent);
-  }
-  .w-minus {
-    color: var(--fg);
-  }
   nav {
     display: flex;
     gap: var(--space-4);
