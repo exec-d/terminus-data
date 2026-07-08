@@ -19,7 +19,9 @@
   let trains = $state(0);
   let days = $state(0);
   let totalObs = $state(0);
-  let updated = $state('');
+  let updated = $state('…');
+
+  let bandEl = $state<HTMLElement>();
 
   function animateCount(
     target: number,
@@ -58,34 +60,60 @@
     return `il y a ${Math.round(h / 24)} j`;
   }
 
-  onMount(async () => {
-    try {
-      const res = await fetch(
-        'https://raw.githubusercontent.com/exec-d/terminus-32/main/stats/line32.json'
-      );
-      const d = (res.ok ? await res.json() : null) as Line32Stats | null;
-      if (!d || !d.trains) {
-        show = false;
-        return;
-      }
-      const agg = aggregatePunctuality(d, 'month');
-      if (agg.totalObs === 0) {
-        show = false;
-        return;
-      }
+  onMount(() => {
+    let observer: IntersectionObserver | undefined;
 
-      const meta = d.meta as Line32Meta;
-      totalObs = agg.totalObs;
-      updated = relTime(meta.updatedAt);
+    (async () => {
+      try {
+        const res = await fetch(
+          'https://raw.githubusercontent.com/exec-d/terminus-32/main/stats/line32.json'
+        );
+        const d = (res.ok ? await res.json() : null) as Line32Stats | null;
+        if (!d || !d.trains) {
+          show = false;
+          return;
+        }
+        const agg = aggregatePunctuality(d, 'month');
+        if (agg.totalObs === 0) {
+          show = false;
+          return;
+        }
 
-      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      animateCount(agg.onTimePct, 1, (v) => (onTimePct = v), reduce);
-      animateCount(agg.cancelledPct, 1, (v) => (cancelledPct = v), reduce);
-      animateCount(Object.keys(d.trains).length, 0, (v) => (trains = v), reduce);
-      animateCount(meta.daysWithData?.month ?? 0, 0, (v) => (days = v), reduce);
-    } catch {
-      show = false;
-    }
+        const meta = d.meta as Line32Meta;
+        totalObs = agg.totalObs;
+        updated = relTime(meta.updatedAt);
+
+        // Lance le count-up une seule fois, à l'entrée de la section dans le
+        // viewport (le bloc reste à `opacity:0` via `use:reveal` jusque-là).
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const trainCount = Object.keys(d.trains).length;
+        const daysCount = meta.daysWithData?.month ?? 0;
+        function startCount() {
+          animateCount(agg.onTimePct, 1, (v) => (onTimePct = v), reduce);
+          animateCount(agg.cancelledPct, 1, (v) => (cancelledPct = v), reduce);
+          animateCount(trainCount, 0, (v) => (trains = v), reduce);
+          animateCount(daysCount, 0, (v) => (days = v), reduce);
+        }
+
+        observer = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                startCount();
+                observer?.disconnect();
+                break;
+              }
+            }
+          },
+          { threshold: 0.4 }
+        );
+        if (bandEl) observer.observe(bandEl);
+      } catch {
+        show = false;
+      }
+    })();
+
+    return () => observer?.disconnect();
   });
 </script>
 
@@ -93,7 +121,7 @@
   <section id="ponctualite">
     <div class="wrap">
       <h2 class="neon-text" use:reveal>La ligne 32, sans langue de bois</h2>
-      <div class="punct" use:reveal>
+      <div class="punct" use:reveal bind:this={bandEl}>
         <div class="punct-hero">
           <div class="punct-big">
             <span class="punct-num">{onTimePct.toFixed(1)}</span><span class="punct-pct">%</span>
