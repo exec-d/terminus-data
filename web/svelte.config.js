@@ -15,7 +15,7 @@ const config = {
       precompress: false,
       strict: true
     }),
-    paths: { base: dev ? '' : '/terminus-32' }
+    paths: { base: dev ? '' : '/terminus-32', relative: false }
   }
 };
 
