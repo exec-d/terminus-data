@@ -9,7 +9,7 @@
 
 <article class="doc">
   <h1>Contact &amp; support</h1>
-  <p class="updated">Dernière mise à jour : 7 juillet 2026</p>
+  <p class="updated">On vous répond dès que possible.</p>
 
   <p class="lead">
     TERMinus est un projet indépendant maintenu par une seule personne. Voici comment le joindre.
