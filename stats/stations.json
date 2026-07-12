@@ -1,12 +1,12 @@
 {
  "meta": {
-  "updatedAt": "2026-07-11T22:29:16+00:00"
+  "updatedAt": "2026-07-12T06:18:32+00:00"
  },
  "stations": [
   {
    "medianDelayS": 0,
    "name": "Saint-Paul-de-Varax",
-   "obs": 25,
+   "obs": 26,
    "order": 0,
    "skippedPct": 8,
    "uic": "87723783"
@@ -14,7 +14,7 @@
   {
    "medianDelayS": 0,
    "name": "Villars-les-Dombes",
-   "obs": 29,
+   "obs": 30,
    "order": 1,
    "skippedPct": 10,
    "uic": "87723759"
@@ -22,15 +22,15 @@
   {
    "medianDelayS": 0,
    "name": "Saint-Andr\u00e9-de-Corcy",
-   "obs": 26,
+   "obs": 27,
    "order": 2,
-   "skippedPct": 12,
+   "skippedPct": 11,
    "uic": "87723734"
   },
   {
    "medianDelayS": 0,
    "name": "Bourg-en-Bresse",
-   "obs": 25,
+   "obs": 26,
    "order": 3,
    "skippedPct": 8,
    "uic": "87743005"
@@ -38,7 +38,7 @@
   {
    "medianDelayS": 0,
    "name": "Servas - Lent",
-   "obs": 25,
+   "obs": 26,
    "order": 4,
    "skippedPct": 8,
    "uic": "87723791"
@@ -46,7 +46,7 @@
   {
    "medianDelayS": 0,
    "name": "Marlieux - Ch\u00e2tillon",
-   "obs": 25,
+   "obs": 26,
    "order": 5,
    "skippedPct": 8,
    "uic": "87723767"
@@ -54,31 +54,31 @@
   {
    "medianDelayS": 0,
    "name": "Saint-Marcel en Dombes",
-   "obs": 26,
+   "obs": 27,
    "order": 6,
-   "skippedPct": 12,
+   "skippedPct": 11,
    "uic": "87723742"
   },
   {
    "medianDelayS": 0,
    "name": "Mionnay",
-   "obs": 26,
+   "obs": 27,
    "order": 7,
-   "skippedPct": 12,
+   "skippedPct": 11,
    "uic": "87723726"
   },
   {
    "medianDelayS": 0,
    "name": "Les \u00c9chets",
-   "obs": 26,
+   "obs": 27,
    "order": 8,
-   "skippedPct": 12,
+   "skippedPct": 11,
    "uic": "87723718"
   },
   {
    "medianDelayS": 0,
    "name": "Sathonay - Rillieux",
-   "obs": 29,
+   "obs": 30,
    "order": 9,
    "skippedPct": 10,
    "uic": "87723700"
@@ -86,7 +86,7 @@
   {
    "medianDelayS": 0,
    "name": "Lyon Part Dieu",
-   "obs": 29,
+   "obs": 30,
    "order": 10,
    "skippedPct": 10,
    "uic": "87723197"
@@ -94,7 +94,7 @@
   {
    "medianDelayS": 0,
    "name": "Lyon Perrache",
-   "obs": 29,
+   "obs": 30,
    "order": 11,
    "skippedPct": 7,
    "uic": "87722025"
