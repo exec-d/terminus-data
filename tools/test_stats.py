@@ -1,4 +1,4 @@
-from stats_lib import uic_of, daily_trend_point, merge_stops, aggregate_stations
+from stats_lib import uic_of, daily_trend_point, merge_stops, aggregate_stations, station_order
 
 
 def test_uic_of_extracts_code():
@@ -80,18 +80,40 @@ def _day_with_stops(stops_by_train):
     }}
 
 
-def test_aggregate_stations_median_and_skip():
+def test_aggregate_stations_mean_median_skip_and_geo_order():
     days = [
         _day_with_stops({
             "T1": [{"uic": "1111111", "delayS": 0, "skipped": False}, {"uic": "2222222", "delayS": 120, "skipped": False}],
             "T2": [{"uic": "1111111", "delayS": 60, "skipped": False}, {"uic": "2222222", "delayS": None, "skipped": True}],
         })
     ]
-    out = aggregate_stations(days, _ref())
-    assert [s["name"] for s in out] == ["Alpha", "Beta", "Gamma"]  # ordre du ref
-    alpha, beta, gamma = out
-    assert alpha["uic"] == "1111111" and alpha["order"] == 0 and alpha["obs"] == 2
-    assert alpha["medianDelayS"] == 60  # median(0, 60) -> élément haut
-    assert alpha["skippedPct"] == 0
-    assert beta["obs"] == 2 and beta["medianDelayS"] == 120 and beta["skippedPct"] == 50
-    assert gamma["obs"] == 0 and gamma["medianDelayS"] is None and gamma["skippedPct"] == 0
+    # Ordre géographique VOLONTAIREMENT différent de l'ordre du _ref : Beta, Gamma, Alpha.
+    order = {"2222222": 0, "3333333": 1, "1111111": 2}
+    out = aggregate_stations(days, _ref(), order)
+    assert [s["name"] for s in out] == ["Beta", "Gamma", "Alpha"]  # rangé par order_by_uic
+    assert [s["order"] for s in out] == [0, 1, 2]  # order final = index géographique
+    by = {s["name"]: s for s in out}
+    # Alpha : delays [0, 60] → médiane 60 (élément haut), moyenne 30.
+    assert by["Alpha"]["obs"] == 2 and by["Alpha"]["medianDelayS"] == 60 and by["Alpha"]["meanDelayS"] == 30
+    assert by["Alpha"]["skippedPct"] == 0
+    assert by["Beta"]["obs"] == 2 and by["Beta"]["medianDelayS"] == 120 and by["Beta"]["meanDelayS"] == 120
+    assert by["Beta"]["skippedPct"] == 50  # 1 skip sur 2
+    assert by["Gamma"]["obs"] == 0 and by["Gamma"]["medianDelayS"] is None and by["Gamma"]["meanDelayS"] is None
+
+
+def test_station_order_from_beb_to_lyon_trip():
+    line32 = {
+        "trips": [
+            {"direction": "lyonToBeb", "stops": [  # sens retour : ordre inverse, ignoré
+                {"stationId": "StopArea:OCE3333333", "seq": 0},
+                {"stationId": "StopArea:OCE2222222", "seq": 1},
+                {"stationId": "StopArea:OCE1111111", "seq": 2},
+            ]},
+            {"direction": "bebToLyon", "stops": [
+                {"stationId": "StopArea:OCE1111111", "seq": 0},
+                {"stationId": "StopArea:OCE2222222", "seq": 1},
+                {"stationId": "StopArea:OCE3333333", "seq": 2},
+            ]},
+        ]
+    }
+    assert station_order(line32) == {"1111111": 0, "2222222": 1, "3333333": 2}

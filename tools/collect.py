@@ -20,7 +20,7 @@ from pathlib import Path
 
 from google.transit import gtfs_realtime_pb2
 
-from stats_lib import aggregate_stations, daily_trend_point, merge_stops, uic_of
+from stats_lib import aggregate_stations, daily_trend_point, merge_stops, station_order, uic_of
 
 ROOT = Path(__file__).resolve().parent.parent
 FEED_URL = "https://proxy.transport.data.gouv.fr/resource/sncf-gtfs-rt-trip-updates"
@@ -190,7 +190,9 @@ def compute_stats(now_iso):
         + "\n"
     )
 
-    station_ref = json.loads((ROOT / "line32.json").read_text())["stations"]
+    line32 = json.loads((ROOT / "line32.json").read_text())
+    station_ref = line32["stations"]
+    order_by_uic = station_order(line32)
     days_records = [
         json.loads(p.read_text())
         for p in _history_paths()
@@ -211,7 +213,7 @@ def compute_stats(now_iso):
         json.dumps(
             {
                 "meta": {"updatedAt": now_iso},
-                "stations": aggregate_stations(days_records, station_ref),
+                "stations": aggregate_stations(days_records, station_ref, order_by_uic),
             },
             indent=1,
             sort_keys=True,

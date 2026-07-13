@@ -80,6 +80,7 @@ export interface StationStat {
   order: number;
   obs: number;
   medianDelayS: number | null;
+  meanDelayS: number | null;
   skippedPct: number;
 }
 export interface StationsData {
