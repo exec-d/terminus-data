@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { StationStat } from '../data/sources';
 
-  // Profil du retard médian (en minutes) le long de la ligne, gare par gare
-  // (ordre Bourg-en-Bresse → Lyon). Le pipeline vient de démarrer la collecte
-  // par gare : beaucoup de gares n'ont encore aucune donnée (medianDelayS
-  // null). On les affiche quand même (point creux) plutôt que de les
+  // Profil du retard MOYEN (en minutes) le long de la ligne, gare par gare, dans
+  // l'ordre géographique Bourg-en-Bresse → Lyon. La moyenne (et non la médiane,
+  // souvent à 0 car la majorité des passages sont à l'heure) capte les à-coups.
+  // Gares sans donnée (meanDelayS null) : affichées en point creux plutôt que de les
   // masquer — la ligne ne doit pas mentir sur ce qu'on sait vs. ce qu'on ne
   // sait pas encore. Noms de gares tronqués + tracé sans animation (safe
   // vis-à-vis de prefers-reduced-motion).
@@ -16,24 +16,24 @@
   const TOTAL_H = H + LABEL_H;
 
   const sorted = $derived([...stations].sort((a, b) => a.order - b.order));
-  const withData = $derived(sorted.filter((s) => s.medianDelayS != null));
-  const mins = $derived(sorted.map((s) => (s.medianDelayS ?? 0) / 60));
+  const withData = $derived(sorted.filter((s) => s.meanDelayS != null));
+  const mins = $derived(sorted.map((s) => (s.meanDelayS ?? 0) / 60));
   const max = $derived(Math.max(2, ...mins));
 
   // Le tracé ne relie que les gares consécutives qui ont une donnée : une
-  // gare sans donnée (medianDelayS null) coupe la ligne plutôt que d'y
+  // gare sans donnée (meanDelayS null) coupe la ligne plutôt que d'y
   // injecter un faux 0 (honnêteté — cf. commentaire en tête de fichier).
   const linePathSegmented = $derived.by(() => {
     const n = sorted.length;
     let d = '';
     let pen = false; // pen down = la gare précédente avait une donnée
     sorted.forEach((s, i) => {
-      if (s.medianDelayS == null) {
+      if (s.meanDelayS == null) {
         pen = false;
         return;
       }
       const px = n > 1 ? (i / (n - 1)) * W : W / 2;
-      const py = max === 0 ? H / 2 : H - (s.medianDelayS / 60 / max) * H;
+      const py = max === 0 ? H / 2 : H - (s.meanDelayS / 60 / max) * H;
       d += `${pen ? 'L' : 'M'}${px.toFixed(2)},${py.toFixed(2)} `;
       pen = true;
     });
@@ -51,7 +51,7 @@
   }
   function pointTitle(s: StationStat): string {
     const delay =
-      s.medianDelayS != null ? `méd. ${(s.medianDelayS / 60).toFixed(1)} min` : 'pas de donnée';
+      s.meanDelayS != null ? `moy. ${(s.meanDelayS / 60).toFixed(1)} min` : 'pas de donnée';
     const skip = s.skippedPct > 0 ? ` · ${s.skippedPct.toFixed(0)} % suppr.` : '';
     return `${s.name} — ${delay}${skip} · ${s.obs} obs`;
   }
@@ -75,7 +75,7 @@
       {#each sorted as s, i (s.order)}
         <circle
           class="point"
-          class:has-data={s.medianDelayS != null}
+          class:has-data={s.meanDelayS != null}
           class:skipped={s.skippedPct > 0}
           cx={x(i)}
           cy={y(mins[i])}

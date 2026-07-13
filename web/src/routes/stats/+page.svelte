@@ -132,7 +132,7 @@
     <div class="stat-explain">
       <h2 use:reveal>Le long de la ligne</h2>
       <p class="muted">
-        Le retard médian gare par gare, de Bourg-en-Bresse à Lyon, pour repérer où le retard
+        Le retard moyen gare par gare, de Bourg-en-Bresse à Lyon, pour repérer où le retard
         s'accumule sur le trajet. Les gares sans donnée restent creuses (aucun zéro inventé) ; le
         profil se précise à mesure que les mesures par gare s'accumulent.
       </p>

@@ -64,8 +64,32 @@ def _median(values):
     return vs[len(vs) // 2] if vs else None
 
 
-def aggregate_stations(days, station_ref):
-    """Agrège le retard par gare sur plusieurs journées, dans l'ordre de station_ref."""
+def _mean(values):
+    return round(sum(values) / len(values)) if values else None
+
+
+def station_order(line32):
+    """Ordre géographique {uic: index} le long de la ligne, d'après le trajet ALLER
+    (bebToLyon) le plus complet de line32.json — ses arrêts sont dans l'ordre `seq`.
+    Le tableau `stations` de line32.json n'est PAS trié géographiquement, d'où ce calcul."""
+    best = []
+    for t in line32.get("trips", []):
+        if t.get("direction") == "bebToLyon":
+            stops = sorted(t.get("stops", []), key=lambda s: s.get("seq", 0))
+            if len(stops) > len(best):
+                best = stops
+    order = {}
+    for s in best:
+        u = uic_of(s.get("stationId"))
+        if u and u not in order:
+            order[u] = len(order)
+    return order
+
+
+def aggregate_stations(days, station_ref, order_by_uic):
+    """Agrège le retard par gare, rangé par ordre géographique (`order_by_uic`, cf.
+    station_order). Retard médian ET moyen : la médiane reste souvent à 0 (majorité de
+    passages à l'heure) alors que la moyenne capte les à-coups (retards de la queue)."""
     delays, skips, obs = {}, {}, {}
     for day in days:
         for rec in day.get("trains", {}).values():
@@ -76,16 +100,21 @@ def aggregate_stations(days, station_ref):
                     skips[u] = skips.get(u, 0) + 1
                 elif s.get("delayS") is not None:
                     delays.setdefault(u, []).append(s["delayS"])
-    out = []
-    for order, station in enumerate(station_ref):
+    end = len(order_by_uic)
+    rows = []
+    for station in station_ref:
         u = uic_of(station["id"])
         n = obs.get(u, 0)
-        out.append({
+        rows.append({
             "uic": u,
             "name": station["name"],
-            "order": order,
+            "order": order_by_uic.get(u, end),  # gares hors trajet retenu → en fin
             "obs": n,
             "medianDelayS": _median(delays.get(u, [])),
+            "meanDelayS": _mean(delays.get(u, [])),
             "skippedPct": round(100 * skips.get(u, 0) / n) if n else 0,
         })
-    return out
+    rows.sort(key=lambda r: (r["order"], r["name"]))
+    for i, r in enumerate(rows):  # ordre final propre 0..N après tri géographique
+        r["order"] = i
+    return rows
